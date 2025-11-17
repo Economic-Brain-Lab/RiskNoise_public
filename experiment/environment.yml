@@ -1,10 +1,11 @@
-name: prob_risk_noise_experiment
+name: RisNoi
 channels:
   - conda-forge
 dependencies:
   - python=3.9
-  - yaml
+  - pyyaml
   - pandas
+  - pytables
   - hdf5
   - pip
   - wxpython

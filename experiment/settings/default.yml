@@ -2,29 +2,30 @@ task:
   n_trials: 20 #(6*4)
   n_repetitions: 2
   n_runs: 15
-  probabilities: [.07, .14, .28, .56]
+  # probabilities: [.07, .14, .28, .56]
   payoffs: [5, 8, 13, 21, 34]
-  # probabilities: [.07]
+  probabilities: [.07]
   # payoffs: [5]
   show_prob_during_payoff: False
   budget: 40
 
 window:
-  # size: [2560, 1440]
-  size: [1470, 956] # MacBook Air
+  size: [2560, 1440]
+  # size: [1470, 956] # MacBook Air
   pos: [0.0, 0]
   color: [0, 0, 0]
-  fullscr: True
+  fullscr: False
   units: deg
   winType: pyglet
   screen: 0
   viewPos: [0, 0]
   colorSpace: rgb
+  waitBlanking: True
 
 monitor:
   name: default
-  # width: 60
-  width: 29.1 # MacBook Air
+  width: 60
+  # width: 29.1 # MacBook Air
   distance: 56  # in cm
   gamma: 1
 
@@ -57,6 +58,7 @@ various:
   text_height: .5
   text_color: [1, 1, 1]
   text_align: left
+  line_spacing: 1.25
 
 durations:
   first_fixation: 0.4 

@@ -20,16 +20,18 @@ class InstructionTrial(Trial):
         txt_height = self.session.settings['various'].get('text_height')
         txt_width = self.session.settings['various'].get('text_width')
         txt_color = self.session.settings['various'].get('text_color')
+        txt_align = self.session.settings['various'].get('text_align')
 
         self.text = TextStim(session.win, txt,
-                             pos=(0.0, 0.0), height=txt_height, wrapWidth=txt_width, color=txt_color)
+                             pos=(0.0, 0.0), height=txt_height, wrapWidth=txt_width, color=txt_color,
+                             alignText=txt_align, anchorHoriz='center')
 
         if bottom_txt is None:
             bottom_txt = "Press any button to continue"
 
         self.text2 = TextStim(session.win, bottom_txt, pos=(
             0.0, -6.0), height=txt_height, wrapWidth=txt_width,
-            color=txt_color)
+            color=txt_color, alignText=txt_align, anchorHoriz='center')
 
     def get_events(self):
 

@@ -27,6 +27,7 @@ class ProbCueTrial(InstructionTrial):
                          **kwargs)
 
         self.text.pos = (0, 1.)
+        self.text.alignText = 'center'
 
     def draw(self):
         super().draw()

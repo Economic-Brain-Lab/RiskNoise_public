@@ -26,7 +26,11 @@ class WTPSession(PylinkEyetrackerSession):
                                             self.settings['cloud'].get('aperture_radius'),
                                             color=(1, -1, -1),
                                             **self.settings['fixation_lines'])
-        self.too_late_stimulus = TextStim(self.win, text='Too late!', pos=(0, 0), color=(1, -1, -1), height=0.5)
+        txt_height = self.settings['various'].get('text_height')
+        txt_color = self.settings['various'].get('text_color')
+        txt_align = self.settings['various'].get('text_align')
+        self.too_late_stimulus = TextStim(self.win, text='Too late!', pos=(0, 0), color=txt_color, height=txt_height,
+                                          alignText=txt_align, anchorHoriz='center')
 
         self.slider_type = slider_type
         self._setup_response_slider(slider_type=slider_type)
@@ -155,10 +159,11 @@ class WTPSession(PylinkEyetrackerSession):
                             [self.sampled_payoff, 0],
                             p = [self.sampled_chance, 1 - self.sampled_chance]
                         )
-                        self.subject_prize = (
+                        self.subject_prize = round(
                             self.settings['task'].get('budget') 
                             - self.computer_bid
-                            + self.lottery_outcome
+                            + self.lottery_outcome,
+                            2
                         )
                     mssg_ticket = f'You drew a ticket with a jackpot of {self.sampled_payoff} AUD at {int(self.sampled_chance * 100)}% chance of winning.'
                     mssg_sbid = f'For this ticket, your bid was {self.subject_bid} AUD.'
@@ -258,7 +263,9 @@ class WTPSession(PylinkEyetrackerSession):
         isis = isis[:n_trials]
 
         for prob in probs:
-            self.trials.append(ProbCueTrial(self, -1, prob))
+            probTrl = ProbCueTrial(self, -1, prob)
+            # probTrl.text.text = ''
+            self.trials.append(probTrl)
 
             np.random.shuffle(payoffs_)
 
@@ -279,4 +286,7 @@ class WTPSession(PylinkEyetrackerSession):
         # append different outro pages to serve for lottery drawing
         n_pages = 4
         for pg in range(n_pages):
-            self.trials.append(OutroTrial(session=self))
+            otrl = OutroTrial(session=self)
+            otrl.text.alignText = 'center'
+            otrl.text2.alignText = 'center'
+            self.trials.append(otrl)

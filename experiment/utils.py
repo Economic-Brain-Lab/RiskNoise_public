@@ -112,7 +112,8 @@ class OutroTrial(InstructionTrial):
         super().run()
 
     def draw(self):
-        self.session.fixation_lines.draw()
+        # self.session.fixation_lines.draw()
+        self.session.fixation_lines.draw(draw_fixation_cross=False)
         super().draw()
 
     def get_events(self):

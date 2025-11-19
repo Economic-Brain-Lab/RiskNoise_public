@@ -1,4 +1,5 @@
 .Ds_Store
+.vscode
 # No logs
 */logs/*
 

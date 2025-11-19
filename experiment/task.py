@@ -422,9 +422,21 @@ class TwoSliderTasktrial(TaskTrial):
 
             self.stimulus_array.draw()
 
-        if self.phase in [4, 5, 6, 7]:
+        if self.phase in [4, 5]:  # Response phases only
             self.session.response_slider1.draw()
             self.session.response_slider2.draw()
+        
+        elif self.phase == self.feedback_phase:
+            if hasattr(self, 'response_onset2'):
+                # Show yellow feedback marker on slider2
+                self.session.response_slider2.marker.inner_color = self.session.settings['slider'].get('feedbackColor')
+                self.session.response_slider1.draw()
+                self.session.response_slider2.draw()
+            else:
+                # Show "Too late!" message when no response made
+                self.session.too_late_stimulus.draw()
+                self.session.response_slider1.draw()
+                self.session.response_slider2.draw()
 
 def main(subject, session, run, slider_type='natural', settings='default', calibrate_eyetracker=False):
     from session import WTPSession

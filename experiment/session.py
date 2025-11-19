@@ -28,7 +28,7 @@ class WTPSession(PylinkEyetrackerSession):
                                             **self.settings['fixation_lines'])
         txt_height = self.settings['various'].get('text_height')
         txt_color = self.settings['various'].get('text_color')
-        txt_align = self.settings['various'].get('text_align')
+        txt_align = 'center'
         self.too_late_stimulus = TextStim(self.win, text='Too late!', pos=(0, 0), color=txt_color, height=txt_height,
                                           alignText=txt_align, anchorHoriz='center')
 

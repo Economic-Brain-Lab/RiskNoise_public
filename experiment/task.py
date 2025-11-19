@@ -98,6 +98,10 @@ class TaskTrial(Trial):
 
         response_slider = self.session.response_slider
 
+        # Hide marker during all phases except response and feedback
+        if self.phase < self.response_phase:
+            response_slider.show_marker = False
+
         if self.phase == 0: # Fixation
             self.session.fixation_lines.setColor((-1, .5, -1), fixation_cross_only=True)
         elif self.phase == 1: # Prob cue
@@ -113,6 +117,8 @@ class TaskTrial(Trial):
         elif self.phase == (self.response_phase - 1):
             response_slider.setMarkerPosition(self.parameters['start_marker_position'])
             response_slider.show_marker = False
+            # Reset marker color to normal (not feedback color from previous trial)
+            response_slider.marker.inner_color = self.session.settings['slider'].get('color')
 
         elif self.phase == self.response_phase:
             response_slider.marker.inner_color = self.session.settings['slider'].get('color')
@@ -242,6 +248,11 @@ class TwoStageTasktrial(TaskTrial):
         response_slider1 = self.session.response_slider1
         response_slider2 = self.session.response_slider2
 
+        # Hide markers during all phases except response and feedback
+        if self.phase < self.response_phase1:
+            response_slider1.show_marker = False
+            response_slider2.show_marker = False
+
         if self.phase == 0: # Fixation
             self.session.fixation_lines.setColor((-1, .5, -1), fixation_cross_only=True)
         elif self.phase == 1: # Prob cue
@@ -288,14 +299,16 @@ class TwoSliderTasktrial(TaskTrial):
             payoff=15, prob=0.55, **kwargs):
 
         if phase_durations is None:
-            phase_durations = [session.settings['durations']['first_fixation'], # Red fixation
-                            session.settings['durations']['second_fixation'],# Pie chart
-                            session.settings['durations']['array_duration'],    # Doy display
-                            jitter,                                 # ISI
-                            session.settings['durations']['response_screen'], # Response 1
-                            0.0, # Response 2
-                            session.settings['durations']['feedback'], # Feedback 2
-                            0.0] # Spillover
+            phase_durations = [
+                session.settings['durations']['first_fixation'],    # Red fixation
+                session.settings['durations']['second_fixation'],   # Probability cue
+                session.settings['durations']['array_duration'],    # Dot display
+                jitter,                                             # ISI
+                session.settings['durations']['response_screen'],   # Response 1
+                0.0,                                                # Response 2
+                session.settings['durations']['feedback'],          # Feedback 2
+                0.0                                                 # Spillover
+            ] 
 
 
         super().__init__(session, trial_nr, phase_durations, jitter, payoff, prob, **kwargs)
@@ -391,6 +404,11 @@ class TwoSliderTasktrial(TaskTrial):
         else:
             self.session.fixation_lines.draw()
 
+        # Hide markers during all phases except response and feedback
+        if self.phase < 4:  # Before first response phase
+            self.session.response_slider1.show_marker = False
+            self.session.response_slider2.show_marker = False
+
         if self.phase == 0: # Fixation
             self.session.fixation_lines.setColor((-1, .5, -1), fixation_cross_only=True)
         elif self.phase == 1: # Prob cue
@@ -432,4 +450,11 @@ if __name__ == "__main__":
 
     args = argparser.parse_args()
 
-    main(args.subject, args.session, args.run, settings=args.settings, slider_type=args.slider_type, calibrate_eyetracker=args.calibrate_eyetracker)
+    main(
+        args.subject, 
+        args.session, 
+        args.run, 
+        settings=args.settings, 
+        slider_type=args.slider_type, 
+        calibrate_eyetracker=args.calibrate_eyetracker
+    )

@@ -90,9 +90,10 @@ class DummyWaiterTrial(InstructionTrial):
 class OutroTrial(InstructionTrial): 
     """ Simple trial with only fixation cross.  """
 
-    def __init__(self, session, trial_nr=0, phase_durations=None, **kwargs):
+    def __init__(self, session, trial_nr=0, phase_durations=None, txt = None, **kwargs):
 
-        txt = '''Please lie still for a few moments.'''
+        if txt is None:
+            txt = '''Please lie still for a few moments.'''
 
         if phase_durations is None:
             phase_durations = [5*60]
@@ -101,6 +102,14 @@ class OutroTrial(InstructionTrial):
                          bottom_txt='', 
                          phase_names=['outro'],
                          **kwargs)
+        
+        # Will be initialized when trial starts running
+        self.mouse_was_pressed = None
+
+    def run(self):
+        # Initialize mouse state at the START of trial execution to avoid false triggers
+        self.mouse_was_pressed = self.session.mouse.getPressed()[0]
+        super().run()
 
     def draw(self):
         self.session.fixation_lines.draw()
@@ -113,7 +122,20 @@ class OutroTrial(InstructionTrial):
             for key, t in events:
                 if key == 'space':
                     self.stop_phase()
+        
+        # Detect NEW mouse clicks (button press, not hold)
+        mouse_is_pressed = self.session.mouse.getPressed()[0]
+        if mouse_is_pressed and not self.mouse_was_pressed:
+            # This is a new click
+            self.stop_phase()
+        self.mouse_was_pressed = mouse_is_pressed
 
+    
+    def set_text(self, txt):
+        self.text.setText(txt)
+    
+    def set_bottom_text(self, txt):
+        self.text2.setText(txt)
 
 def get_settings(settings):
     settings_fn = op.join(op.dirname(__file__), 'settings', f'{settings}.yml')

@@ -99,7 +99,7 @@ class WTPSession(PylinkEyetrackerSession):
                                 borderWidth=self.settings['slider'].get('borderWidth'),
                                 text_height=self.settings['slider'].get('text_height'),
                                 slider_type='natural',
-                                n_discrete_steps=self.settings['slider'].get('n_discrete_steps', 7),
+                                n_steps=self.settings['slider'].get('n_discrete_steps', 7),
                                 )
             
 
@@ -128,7 +128,94 @@ class WTPSession(PylinkEyetrackerSession):
 
         if self.eyetracker_on:
             self.start_recording_eyetracker()
+        
+        outro = -1 #counter of outro pages
         for trial in self.trials:
+            if isinstance(trial, OutroTrial):
+                outro += 1
+                if outro == 0:
+                    # select a random trial
+                    self.sampled_trial = np.random.choice([
+                        trl for trl in self.trials 
+                        # get just experimental trials
+                        if isinstance(trl, (TaskTrial, TwoStageTasktrial, TwoSliderTasktrial))
+                        # get trials that were responded to
+                        and trl.parameters.get('response') != None
+                    ])
+                    # run a bidding process and lottery draws
+                    self.sampled_payoff = self.sampled_trial.parameters['payoff']
+                    self.sampled_chance = self.sampled_trial.parameters['prob']
+                    self.subject_bid = round(self.sampled_trial.parameters['response'], 2)
+                    self.computer_bid = round(np.random.uniform(0,60), 2)
+                    if self.computer_bid > self.subject_bid:
+                        self.lottery_outcome = 0
+                        self.subject_prize = 0
+                    else:
+                        self.lottery_outcome = np.random.choice(
+                            [self.sampled_payoff, 0],
+                            p = [self.sampled_chance, 1 - self.sampled_chance]
+                        )
+                        self.subject_prize = (
+                            self.settings['task'].get('budget') 
+                            - self.computer_bid
+                            + self.lottery_outcome
+                        )
+                    mssg_ticket = f'You drew a ticket with a jackpot of {self.sampled_payoff} AUD at {int(self.sampled_chance * 100)}% chance of winning.'
+                    mssg_sbid = f'For this ticket, your bid was {self.subject_bid} AUD.'
+                    mssg_cbid = f'The computer bid was {self.computer_bid} AUD.'
+                    mssg_auction = [
+                        '\n'.join([
+                            f'Your bid was higher and you won the auction. Congratulations!', 
+                            f'You will only need to pay {self.computer_bid} AUD for the lottery ticket',
+                            f'Your current prize pot is {self.settings["task"].get("budget") - self.computer_bid} AUD.',
+                            f'We will now proceed to drawing the lottery.'
+                        ]),
+                        '\n'.join([
+                            f'Your bid was lower and you lost the auction.', 
+                        ])
+                    ][int(self.computer_bid > self.subject_bid)]
+                    mssg_lottery = [
+                        '\n'.join([
+                            f'You won {self.lottery_outcome} AUD on the lottery.', 
+                            f'Your total prize is {self.subject_prize} AUD.',
+                            f'Congratulations!'
+                        ]),
+                        '\n'.join([
+                            f'Unfortunately, you will not receive any prize.',
+                            f'You will still be compensated for your time.' 
+                        ])
+                    ][int(self.computer_bid > self.subject_bid)]
+                    mssg = '\n'.join([
+                        f'This was the last trial.',
+                        f'We will now proceed to drawing your lottery ticket.'
+                    ])
+                if outro == 1:
+                   mssg = '\n'.join([
+                        mssg_ticket,
+                        mssg_sbid,
+                        f'We will now proceed to drawing computer bid'
+                    ])
+                if outro == 2:
+                    mssg = '\n'.join([
+                        mssg_ticket,
+                        mssg_sbid,
+                        mssg_cbid,
+                        mssg_auction
+                    ])
+                if outro == 3:
+                    mssg = '\n'.join([
+                        mssg_lottery,
+                        'Thank you for your participation.',
+                        'Please remain as you are. Somebody will assist you shortly.'
+                    ])
+                
+                trial.set_text(mssg)
+                
+                mssg_bottom = 'Press LEFT mouse button to continue.'
+                if outro == 3:
+                    mssg_bottom = ''
+                trial.set_bottom_text(mssg_bottom)
+
             trial.run()
 
         self.close()
@@ -136,10 +223,14 @@ class WTPSession(PylinkEyetrackerSession):
     def create_trials(self, include_instructions=True):
         """Create trials."""
 
-        instruction_trial1 = InstructionTrial(self, 0, self.instructions['instruction1'].format(run=self.settings['run']))
+        instruction_trials_list = [
+            # InstructionTrial(self, 0, self.instructions['instruction1'].format(run=self.settings['run']))
+            InstructionTrial(self, 0, pg_txt, bottom_txt='Press LEFT button to continue.')
+            for pg_txt in self.instructions['instruction1']
+        ]
         dummy_trial = DummyWaiterTrial(self, 0, n_triggers=self.settings['mri']['n_dummy_scans'])
         
-        self.trials = [instruction_trial1, dummy_trial]
+        self.trials = instruction_trials_list + [dummy_trial]
 
         if not include_instructions:
             self.trials = self.trials[1:]
@@ -185,4 +276,7 @@ class WTPSession(PylinkEyetrackerSession):
                                                 prob=prob))
                 trial_nr += 1
 
-        self.trials.append(OutroTrial(session=self))
+        # append different outro pages to serve for lottery drawing
+        n_pages = 4
+        for pg in range(n_pages):
+            self.trials.append(OutroTrial(session=self))

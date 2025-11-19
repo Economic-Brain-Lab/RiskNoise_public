@@ -7,7 +7,16 @@ class FixationLines(object):
 
     def __init__(self, win, circle_radius, color, center_fixation_size=0.25, plus_sign=False, draw_circle=True, draw_outer_cross=True, *args, **kwargs):
 
-        win_size = win.size
+        # Get window size in the window's units (deg if window units='deg')
+        if hasattr(win, 'units') and win.units == 'deg':
+            # Calculate window size in degrees
+            monitor = win.monitor
+            width_deg = 2 * np.degrees(np.arctan(monitor.getWidth() / (2.0 * monitor.getDistance())))
+            height_deg = width_deg * (win.size[1] / win.size[0])  # maintain aspect ratio
+            win_size = np.array([width_deg, height_deg])
+        else:
+            win_size = win.size
+            
         max_dimension = np.max(win_size)
 
         kwargs['colorSpace'] = 'rgb'

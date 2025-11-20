@@ -78,8 +78,8 @@ fixation_lines:
   draw_outer_cross: False
 
 prob_cue:
-  fixation_size: 1.0
-  cue_size: 1.0
+  fixation_size: .5
+  cue_size: 2
 
 mouse:
   visible: False

@@ -443,10 +443,10 @@ class ProbabilityPieChart(object):
 
         deg = prob * 360.
 
-        self.piechart_pos = Pie(window, end=deg, fillColor=color_pos,
+        self.piechart_pos = Pie(window, end=deg, color=color_pos,
                                 pos=pos,
                                 size=size)
-        self.piechart_neg = Pie(window, start=deg, end=360, fillColor=color_neg,
+        self.piechart_neg = Pie(window, start=deg, end=360, color=color_neg,
                                 pos=pos,
                                 size=size)
 

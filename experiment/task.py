@@ -69,7 +69,7 @@ class TaskTrial(Trial):
                                                      self.session.settings['cloud'].get('dot_radius'),)
 
         self.prob_cue = ProbabilityPieChart(self.session.win, self.parameters['prob'],
-                                            self.session.settings['prob_cue'].get('fixation_size'),
+                                            self.session.settings['prob_cue'].get('cue_size'),
                                             include_text=False)
 
         if self.session.settings['task'].get('show_prob_during_payoff'):
@@ -398,28 +398,26 @@ class TwoSliderTasktrial(TaskTrial):
         if self.session.win.mouseVisible:
             self.session.win.mouseVisible = False
 
-        if (self.phase == self.feedback_phase) & (not hasattr(self, 'response_onset')):
+        if self.phase in self.stimulus_phase and self.session.settings['task'].get(
+            'show_prob_during_payoff'
+        ):
             self.session.fixation_lines.draw(draw_fixation_cross=False)
-        elif self.phase in self.stimulus_phase:
-            self.session.fixation_lines.draw(draw_fixation_cross=False)
-        else:
+        elif self.phase != self.feedback_phase:
             self.session.fixation_lines.draw()
 
         # Hide markers during all phases except response and feedback
         if self.phase < 4:  # Before first response phase
             self.session.response_slider1.show_marker = False
             self.session.response_slider2.show_marker = False
-
+        
         if self.phase == 0: # Fixation
             self.session.fixation_lines.setColor((-1, .5, -1), fixation_cross_only=True)
         elif self.phase == 1: # Prob cue
             self.session.fixation_lines.setColor((1, -1, -1), fixation_cross_only=True)
             self.prob_cue.draw()
         elif self.phase in self.stimulus_phase:
-
             if self.session.settings['task'].get('show_prob_during_payoff'):
                 self.prob_fixation.draw()
-
             self.stimulus_array.draw()
 
         if self.phase in [4, 5]:  # Response phases only
@@ -432,6 +430,7 @@ class TwoSliderTasktrial(TaskTrial):
                 self.session.response_slider2.marker.inner_color = self.session.settings['slider'].get('feedbackColor')
                 self.session.response_slider1.draw()
                 self.session.response_slider2.draw()
+                self.session.fixation_lines.draw()
             else:
                 # Show "Too late!" message when no response made
                 self.session.too_late_stimulus.draw()

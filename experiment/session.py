@@ -166,13 +166,13 @@ class WTPSession(PylinkEyetrackerSession):
                             2
                         )
                     mssg_ticket = f'You drew a ticket with a jackpot of {self.sampled_payoff} AUD at {int(self.sampled_chance * 100)}% chance of winning.'
-                    mssg_sbid = f'For this ticket, your bid was {self.subject_bid} AUD.'
-                    mssg_cbid = f'The computer bid was {self.computer_bid} AUD.'
+                    mssg_sbid = f'For this ticket, your bid was {self.subject_bid:.2f} AUD.'
+                    mssg_cbid = f'The computer bid was {self.computer_bid:.2f} AUD.'
                     mssg_auction = [
                         '\n'.join([
                             f'Your bid was higher and you won the auction. Congratulations!', 
-                            f'You will only need to pay {self.computer_bid} AUD for the lottery ticket',
-                            f'Your current prize pot is {self.settings["task"].get("budget") - self.computer_bid} AUD.',
+                            f'You will only need to pay {self.computer_bid:.2f} AUD for the lottery ticket',
+                            f'Your current prize pot is {(self.settings["task"].get("budget") - self.computer_bid):.2f} AUD.',
                             f'We will now proceed to drawing the lottery.'
                         ]),
                         '\n'.join([
@@ -182,7 +182,7 @@ class WTPSession(PylinkEyetrackerSession):
                     mssg_lottery = [
                         '\n'.join([
                             f'You won {self.lottery_outcome} AUD on the lottery.', 
-                            f'Your total prize is {self.subject_prize} AUD.',
+                            f'Your total prize is {self.subject_prize:.2f} AUD.',
                             f'Congratulations!'
                         ]),
                         '\n'.join([

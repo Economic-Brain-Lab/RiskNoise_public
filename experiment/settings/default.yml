@@ -65,9 +65,17 @@ durations:
   second_fixation: 0.5
   array_duration: 0.6
   isi: [1., 1., 1.]
-  response_screen: 5.0
+  response_screen: null
   feedback: 0.5
   cue_trials: 2.
+
+wait_for_input:
+  fixation1: true
+  prob_cue: true
+  stimulus: true
+  jitter: true
+  response: false
+  feedback: true
 
 fixation_lines:
   lineWidth: 2

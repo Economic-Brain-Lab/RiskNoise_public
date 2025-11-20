@@ -43,11 +43,15 @@ class TaskTrial(Trial):
                 payoff=15, prob=0.55, **kwargs):
 
         if phase_durations is None:
+            response_duration = session.settings['durations']['response_screen']
+            if response_duration is None:
+                response_duration = 999999  # effectively infinite
+            
             phase_durations = [session.settings['durations']['first_fixation'], # Red fixation
                                session.settings['durations']['second_fixation'],# Pie chart
                             session.settings['durations']['array_duration'],    # Doy display
                             jitter,                                 # ISI            
-                            session.settings['durations']['response_screen'], # Response
+                            response_duration, # Response
                             session.settings['durations']['feedback'], # Feedback
                             0.0] #Spillover
 
@@ -60,6 +64,11 @@ class TaskTrial(Trial):
         phase_names = ['fixation1', 'prob_cue', 'stimulus', 'jitter', 'response', 'feedback', 'iti']
 
         super().__init__(session, trial_nr, phase_durations, phase_names=phase_names, **kwargs)
+        
+        # Apply wait_for_input settings to phase durations
+        for i, phase_name in enumerate(phase_names):
+            if self.should_wait_for_input(i):
+                self.phase_durations[i] = 999999
 
         self.parameters['prob'] = prob
         self.parameters['payoff'] = payoff
@@ -81,7 +90,38 @@ class TaskTrial(Trial):
         self.parameters['start_marker_position'] = np.random.randint(self.session.settings['slider']['range'][0],
                                                                      self.session.settings['slider']['range'][1] + 1)
 
+    def should_wait_for_input(self, phase):
+        """Check if this phase should wait for user input"""
+        wait_config = self.session.settings.get('wait_for_input', {})
+        
+        if isinstance(wait_config, bool):
+            return wait_config  # Global setting
+        elif isinstance(wait_config, dict):
+            phase_name = self.phase_names[phase]
+            return wait_config.get(phase_name, False)
+        return False
+
     def get_events(self):
+        # Check for input to advance phase if wait_for_input is enabled
+        if self.should_wait_for_input(self.phase):
+            # Initialize tracking for this phase on first call
+            phase_key = f'_wait_input_phase_{self.phase}'
+            if not hasattr(self, phase_key):
+                event.clearEvents('keyboard')
+                setattr(self, phase_key, {'cleared': True, 'ready': False})
+            
+            state = getattr(self, phase_key)
+            
+            # Wait for key release before accepting new input
+            if not state['ready']:
+                # Check if all keys are released
+                if len(event.getKeys()) == 0:
+                    state['ready'] = True
+            else:
+                # Ready to accept input - check for new key events
+                keys = event.getKeys()
+                if 'space' in keys or 'return' in keys:
+                    self.stop_phase()
 
         events = super().get_events()
 
@@ -142,11 +182,15 @@ class TwoStageTasktrial(TaskTrial):
                 payoff=15, prob=0.55, **kwargs):
 
         if phase_durations is None:
+            response_duration = session.settings['durations']['response_screen']
+            if response_duration is None:
+                response_duration = 999999  # effectively infinite
+            
             phase_durations = [session.settings['durations']['first_fixation'], # Red fixation
                                session.settings['durations']['second_fixation'],# Pie chart
                             session.settings['durations']['array_duration'],    # Doy display
                             jitter,                                 # ISI
-                            session.settings['durations']['response_screen'], # Response 1
+                            response_duration, # Response 1
                             session.settings['durations']['feedback'], # Feedback 1
                             0.0, # Response 2
                             session.settings['durations']['feedback'], # Feedback 2
@@ -298,18 +342,18 @@ class TwoSliderTasktrial(TaskTrial):
     def __init__(self, session, trial_nr, phase_durations=None,
             jitter=1,
             payoff=15, prob=0.55, **kwargs):
-        
-        # set infinite time to respond
-        if not session.settings['durations']['response_screen']:
-            session.settings['durations']['response_screen'] = 999999
 
         if phase_durations is None:
+            response_duration = session.settings['durations']['response_screen']
+            if response_duration is None:
+                response_duration = 999999  # effectively infinite
+            
             phase_durations = [
                 session.settings['durations']['first_fixation'],    # Green fixation
                 session.settings['durations']['second_fixation'],   # Probability cue
                 session.settings['durations']['array_duration'],    # Dot display
                 jitter,                                             # ISI
-                session.settings['durations']['response_screen'],   # Response 1
+                response_duration,                                  # Response 1
                 0.0,                                                # Response 2
                 session.settings['durations']['feedback'],          # Feedback 2
                 0.0                                                 # Spillover

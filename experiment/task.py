@@ -298,10 +298,14 @@ class TwoSliderTasktrial(TaskTrial):
     def __init__(self, session, trial_nr, phase_durations=None,
             jitter=1,
             payoff=15, prob=0.55, **kwargs):
+        
+        # set infinite time to respond
+        if not session.settings['durations']['response_screen']:
+            session.settings['durations']['response_screen'] = 999999
 
         if phase_durations is None:
             phase_durations = [
-                session.settings['durations']['first_fixation'],    # Red fixation
+                session.settings['durations']['first_fixation'],    # Green fixation
                 session.settings['durations']['second_fixation'],   # Probability cue
                 session.settings['durations']['array_duration'],    # Dot display
                 jitter,                                             # ISI

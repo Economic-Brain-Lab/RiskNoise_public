@@ -6,6 +6,7 @@ import os.path as op
 from instruction import InstructionTrial
 from task import TaskTrial, OutroTrial, DummyWaiterTrial, ProbCueTrial, TwoStageTasktrial, TwoSliderTasktrial
 import numpy as np
+from pathlib import Path
 
 class WTPSession(PylinkEyetrackerSession):
     def __init__(self, output_str, subject=None, output_dir=None, settings_file=None, run=None, eyetracker_on=False, calibrate_eyetracker=False,
@@ -146,6 +147,17 @@ class WTPSession(PylinkEyetrackerSession):
                         # get trials that were responded to
                         and trl.parameters.get('response') != None
                     ])
+                    if Path(self.settings_file).stem == 'demo':
+                        mssg_bids = '\n'.join(
+                            ['Here is the list of lottery tickets and your bids:']
+                            + [
+                                f'\t{idx_trl + 1}.\tJackpot: {val_trl.parameters["payoff"]} AUD;\tChances: {int(val_trl.parameters["prob"] * 100)}%;\tYour bid: {val_trl.parameters["response"]:.2f} AUD'
+                                for idx_trl, val_trl in enumerate([
+                                    trl for trl in self.trials
+                                    if isinstance(trl, (TaskTrial,TwoStageTasktrial,TwoSliderTasktrial))
+                                ])
+                            ]
+                        )
                     # run a bidding process and lottery draws
                     self.sampled_payoff = self.sampled_trial.parameters['payoff']
                     self.sampled_chance = self.sampled_trial.parameters['prob']
@@ -192,8 +204,10 @@ class WTPSession(PylinkEyetrackerSession):
                     ][int(self.computer_bid > self.subject_bid)]
                     mssg = '\n'.join([
                         f'This was the last trial.',
-                        f'We will now proceed to drawing your lottery ticket.'
+                        f'We will now proceed to drawing your lottery ticket.\n\n'
                     ])
+                    if Path(self.settings_file).stem == 'demo':
+                        mssg += mssg_bids
                 if outro == 1:
                    mssg = '\n'.join([
                         mssg_ticket,
@@ -240,20 +254,30 @@ class WTPSession(PylinkEyetrackerSession):
         if not include_instructions:
             self.trials = self.trials[1:]
 
-        n_trials = self.settings['task'].get('n_trials')
+        # n_trials = self.settings['task'].get('n_trials')
+        n_reps = self.settings['task'].get('n_reps')
+        n_runs = self.settings['task'].get('n_runs')
         n_probs = len(self.settings['task'].get('probabilities'))
         n_payoffs = len(self.settings['task']['payoffs'])
+        n_trials = n_probs * n_payoffs * n_reps * n_runs
+        if Path(self.settings_file).stem == 'demo':
+            n_trials = n_probs
+            n_reps = 1
+            n_runs = 1
 
-        # Make sure n_trials is a multiple of 6 and 4 (or throw error)
-        if n_trials % n_probs != 0:
-            raise ValueError('n_trials should be a multiple of n_probs')
-        if n_trials % n_payoffs != 0:
-            raise ValueError('n_trials should be a multiple of n_payoffs')
+        # # Make sure n_trials is a multiple of 6 and 4 (or throw error)
+        # if n_trials % n_probs != 0:
+        #     raise ValueError('n_trials should be a multiple of n_probs')
+        # if n_trials % n_payoffs != 0:
+        #     raise ValueError('n_trials should be a multiple of n_payoffs')
 
         probs = list(self.settings['task']['probabilities'])
-        np.random.shuffle(probs)
+        # np.random.shuffle(probs)
 
+        probs_ = probs * n_reps
         payoffs_ = list(self.settings['task']['payoffs'])
+        if Path(self.settings_file).stem == 'demo':
+            probs_ = probs
 
 
         trial_nr = 1
@@ -262,26 +286,38 @@ class WTPSession(PylinkEyetrackerSession):
         isis = possible_isis * int(np.ceil(n_trials / len(possible_isis)))
         isis = isis[:n_trials]
 
-        for prob in probs:
-            probTrl = ProbCueTrial(self, -1, prob)
-            # probTrl.text.text = ''
-            self.trials.append(probTrl)
+        for run in range(n_runs):
+            np.random.shuffle(probs_)
+            for prob in probs_:
+                # probTrl = ProbCueTrial(self, -1, prob)
+                # probTrl.text.text = ''
+                # self.trials.append(probTrl)
 
-            np.random.shuffle(payoffs_)
-
-            for payoff in payoffs_:
-                
-                if self.slider_type == 'two-stage':
-                    self.trials.append(TwoStageTasktrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
-                                             prob=prob))
-
-                elif self.slider_type == 'two-sliders':
-                    self.trials.append(TwoSliderTasktrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
-                                             prob=prob))
-                else:
-                    self.trials.append(TaskTrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
+                np.random.shuffle(payoffs_)
+                if Path(self.settings_file).stem == 'demo':
+                    payoffs_ = [np.random.choice(list(self.settings['task']['payoffs']))]
+                for payoff in payoffs_:
+                    
+                    if self.slider_type == 'two-stage':
+                        self.trials.append(TwoStageTasktrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
                                                 prob=prob))
-                trial_nr += 1
+
+                    elif self.slider_type == 'two-sliders':
+                        self.trials.append(TwoSliderTasktrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
+                                                prob=prob))
+                    else:
+                        self.trials.append(TaskTrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
+                                                    prob=prob))
+                    trial_nr += 1
+            if run < (n_runs - 1):
+                blk_break = InstructionTrial(
+                    self, 0, 
+                    f'This was run {run}. Take a short break.', 
+                    bottom_txt='Press LEFT button to continue.')
+                blk_break.text.alignText = 'center'
+                blk_break.text2.alignText = 'center'
+                self.trials.append(blk_break)
+
 
         # append different outro pages to serve for lottery drawing
         n_pages = 4

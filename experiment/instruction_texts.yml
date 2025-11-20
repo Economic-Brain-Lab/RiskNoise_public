@@ -14,7 +14,7 @@ instruction1:
     At the end of the testing session, one of the lottery tickets will be randomly selected, e.g., 50% of winning 40 AUD.\n\
     
     Next, your bid for that lottery ticket, e.g., 25 AUD, will be compared to a computer bid.\n\
-    The computer will randomly select a monetary bid in 0 - 60 AUD range, e.g., 20 AUD.\n\
+    The computer will randomly select a monetary bid in 0 - 40 AUD range, e.g., 20 AUD.\n\
 
     If the computer bid is higher than yours, then you lose and your total prize pot is set to 0 AUD.\n\
     If your bid is higher than the computer bid, then you win the auction and the lottery ticket is yours!\n\

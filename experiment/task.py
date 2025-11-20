@@ -1,3 +1,9 @@
+#===============================================================================
+# %% Issue tracker
+# TODO: Remove prob-cue trial
+# TODO: check data structures and implement saving of the lottery
+# TODO: for demo part, show all tickets at the end
+#===============================================================================
 import argparse
 import os.path as op
 from psychopy.visual import Slider
@@ -79,7 +85,8 @@ class TaskTrial(Trial):
 
         self.prob_cue = ProbabilityPieChart(self.session.win, self.parameters['prob'],
                                             self.session.settings['prob_cue'].get('cue_size'),
-                                            include_text=False)
+                                            include_text=True)
+        self.prob_cue.text.height = self.session.settings['various'].get('text_height')
 
         if self.session.settings['task'].get('show_prob_during_payoff'):
             self.prob_fixation = ProbabilityPieChart(self.session.win, self.parameters['prob'],

@@ -69,12 +69,12 @@ durations:
 
 # should the code wait for input before proceeding to next display
 wait_for_input:
-  fixation1: false
-  prob_cue: false
-  stimulus: false
-  jitter: false
+  fixation1: true
+  prob_cue: true
+  stimulus: true
+  jitter: true
   response: false
-  feedback: false
+  feedback: true
 
 fixation_lines:
   lineWidth: 2

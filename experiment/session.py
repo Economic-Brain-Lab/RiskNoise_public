@@ -161,8 +161,8 @@ class WTPSession(PylinkEyetrackerSession):
                     # run a bidding process and lottery draws
                     self.sampled_payoff = self.sampled_trial.parameters['payoff']
                     self.sampled_chance = self.sampled_trial.parameters['prob']
-                    self.subject_bid = round(self.sampled_trial.parameters['response'], 2)
-                    self.computer_bid = round(np.random.uniform(0,60), 2)
+                    self.subject_bid = round(float(self.sampled_trial.parameters['response']), 2)
+                    self.computer_bid = round(np.random.uniform(0,self.settings['task'].get('budget')), 2)
                     if self.computer_bid > self.subject_bid:
                         self.lottery_outcome = 0
                         self.subject_prize = 0
@@ -177,6 +177,20 @@ class WTPSession(PylinkEyetrackerSession):
                             + self.lottery_outcome,
                             2
                         )
+                    # compile outcomes for saving
+                    outcomes = dict(
+                        sampled_trial = self.sampled_trial.trial_nr,
+                        sampled_payoff = self.sampled_payoff,
+                        sampled_prob = self.sampled_chance,
+                        subject_bid = self.subject_bid,
+                        computer_bid = self.computer_bid,
+                        auction_winner = [
+                            'subject', 'computer'
+                        ][int(self.computer_bid > self.subject_bid)],
+                        lottery_outcome = self.lottery_outcome,
+                        subject_prize = self.subject_prize
+                    )
+                    # compile messages about outcomes
                     mssg_ticket = f'You drew a ticket with a jackpot of {self.sampled_payoff} AUD at {int(self.sampled_chance * 100)}% chance of winning.'
                     mssg_sbid = f'For this ticket, your bid was {self.subject_bid:.2f} AUD.'
                     mssg_cbid = f'The computer bid was {self.computer_bid:.2f} AUD.'
@@ -212,7 +226,7 @@ class WTPSession(PylinkEyetrackerSession):
                    mssg = '\n'.join([
                         mssg_ticket,
                         mssg_sbid,
-                        f'We will now proceed to drawing computer bid'
+                        f'We will now proceed to drawing computer bid.'
                     ])
                 if outro == 2:
                     mssg = '\n'.join([
@@ -236,6 +250,11 @@ class WTPSession(PylinkEyetrackerSession):
                 trial.set_bottom_text(mssg_bottom)
 
             trial.run()
+        
+        # save bidding and lottery outcome data
+        outcomes_file = op.join(self.output_dir, self.output_str + "_outcomes.yml")
+        with open(outcomes_file, "w") as f_out:
+            yaml.dump(outcomes, f_out, indent=4, default_flow_style=False)
 
         self.close()
 

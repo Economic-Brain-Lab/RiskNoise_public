@@ -1,3 +1,5 @@
+
 [submodule "experiment/libs/exptools2"]
 	path = experiment/libs/exptools2
-	url = https://github.com/Gilles86/exptools2
+	url = https://github.com/Economic-Brain-Lab/exptools2.git
+	branch = uq-qbi

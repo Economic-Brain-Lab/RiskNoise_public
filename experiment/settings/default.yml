@@ -8,11 +8,12 @@ task:
   budget: 40
 
 window:
-  size: [2560, 1440]
+  size: [1920, 1080]
+  # size: [2560, 1440] # QBI-333
   # size: [1470, 956] # MacBook Air
   pos: [0.0, 0]
   color: [0, 0, 0]
-  fullscr: False
+  fullscr: True
   units: deg
   winType: pyglet
   screen: 0
@@ -22,7 +23,8 @@ window:
 
 monitor:
   name: default
-  width: 60
+  width: 70
+  # width: 60
   # width: 29.1 # MacBook Air
   distance: 56  # in cm
   gamma: 1

@@ -14,3 +14,5 @@ dependencies:
      - ./libs/exptools2  # Path to the exptools2 submodule
      - psychopy-sounddevice
      - psychopy-pyo
+     - --extra-index-url https://pypi.sr-support.com
+     - sr-research-pylink==2.1.762.0

@@ -101,6 +101,24 @@ class TaskTrial(Trial):
         """Check if this phase should wait for user input"""
         wait_config = self.session.settings.get('wait_for_input', {})
         
+        # Check for trial-specific overrides
+        overrides = self.session.settings.get('wait_for_input_overrides', {})
+        if overrides:
+            phase_name = self.phase_names[phase]
+            
+            # Check for exact trial number match
+            if self.trial_nr in overrides:
+                trial_config = overrides[self.trial_nr]
+                if phase_name in trial_config:
+                    return trial_config[phase_name]
+            
+            # Check for range match (trial 3+)
+            elif self.trial_nr >= 3 and 3 in overrides:
+                trial_config = overrides[3]
+                if phase_name in trial_config:
+                    return trial_config[phase_name]
+        
+        # Normal behavior
         if isinstance(wait_config, bool):
             return wait_config  # Global setting
         elif isinstance(wait_config, dict):

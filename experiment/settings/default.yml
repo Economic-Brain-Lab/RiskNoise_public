@@ -1,7 +1,7 @@
 task:
   # n_trials: 20 #(6*4)
-  n_reps: 1
-  n_runs: 2
+  n_reps: 2
+  n_runs: 12
   probabilities: [.07, .14, .28, .56]
   payoffs: [5, 8, 13, 21, 34]
   show_prob_during_payoff: False
@@ -65,7 +65,7 @@ durations:
   array_duration: 0.6
   isi: [1., 1., 1.]
   # response deadline, null if no deadline
-  response_screen: null
+  response_screen: 5
   feedback: 0.5
   cue_trials: 2.
 
@@ -95,3 +95,12 @@ mouse:
 
 interface:
   mouse_multiplier: 2.
+
+# eyetracker:
+#   model: eyelink
+#   CNUM: 5
+#   MIN_CALIB_FIX: 1000
+#   options:
+#     active_eye: RIGHT
+#     sample_rate: 500
+#     calibration_type: HV5

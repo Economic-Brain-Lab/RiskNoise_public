@@ -279,10 +279,6 @@ class WTPSession(PylinkEyetrackerSession):
         n_probs = len(self.settings['task'].get('probabilities'))
         n_payoffs = len(self.settings['task']['payoffs'])
         n_trials = n_probs * n_payoffs * n_reps * n_runs
-        if Path(self.settings_file).stem == 'demo':
-            n_trials = n_probs
-            n_reps = 1
-            n_runs = 1
 
         # # Make sure n_trials is a multiple of 6 and 4 (or throw error)
         # if n_trials % n_probs != 0:
@@ -295,9 +291,6 @@ class WTPSession(PylinkEyetrackerSession):
 
         probs_ = probs * n_reps
         payoffs_ = list(self.settings['task']['payoffs'])
-        if Path(self.settings_file).stem == 'demo':
-            probs_ = probs
-
 
         trial_nr = 1
 
@@ -313,8 +306,6 @@ class WTPSession(PylinkEyetrackerSession):
                 # self.trials.append(probTrl)
 
                 np.random.shuffle(payoffs_)
-                if Path(self.settings_file).stem == 'demo':
-                    payoffs_ = [np.random.choice(list(self.settings['task']['payoffs']))]
                 for payoff in payoffs_:
                     
                     if self.slider_type == 'two-stage':
@@ -331,7 +322,7 @@ class WTPSession(PylinkEyetrackerSession):
             if run < (n_runs - 1):
                 blk_break = InstructionTrial(
                     self, 0, 
-                    f'This was run {run}. Take a short break.', 
+                    f'This was run {run + 1}. Take a short break.', 
                     bottom_txt='Press LEFT button to continue.')
                 blk_break.text.alignText = 'center'
                 blk_break.text2.alignText = 'center'

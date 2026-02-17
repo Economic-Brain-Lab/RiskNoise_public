@@ -1,46 +1,57 @@
 instruction1:
   [
     "\
-    Welcome to our study! We investigate how people make choices under uncertainty.\n\
+    Welcome to our study! We are interested in how people make choices under uncertainty.\n\
 
-    You can think of our task as an auction in which you can bid for different prizes. You will be given 40 AUD to bid as you wish during the experiment.\n\
+    The task you are about to do is a little bit like an auction in which you can bid for different prizes.\n\
 
-    You will be bidding for lottery tickets that have different jackpots and different chances of winning.\n\
-    For example, you may be offered 50% chances of winning 40 AUD and 50% of winning 0 AUD.\n\
-    The jackpots and chances of winning may vary across trials. Your task is always the same.\n\
-    
-    In every trial, you will enter the exact amount in AUD which you are willing to pay for that lottery ticket.\n\
-    The trials are independent and your budget is the same on every trial. Each time, you can bid up to 60 AUD.\n\
-    At the end of the testing session, one of the lottery tickets will be randomly selected, e.g., 50% of winning 40 AUD.\n\
-    
-    Next, your bid for that lottery ticket, e.g., 25 AUD, will be compared to a computer bid.\n\
-    The computer will randomly select a monetary bid in 0 - 40 AUD range, e.g., 20 AUD.\n\
+    You will be bidding for imaginary “lottery tickets” that have different jackpots and different chances of winning.\n\
 
-    If the computer bid is higher than yours, then you lose and your total prize pot is set to 0 AUD.\n\
-    If your bid is higher than the computer bid, then you win the auction and the lottery ticket is yours!\n\
-    Importantly, you will only have to pay the price of the lower, computer bid, e.g., 20 AUD. The remaining funds will contribute to your total prize pot, i.e., 40 - 20 = 20 AUD.\n\
+    For example, in one lottery you might be offered a 50:50 chance of winning $40. This means you would have a 50% chance of winning $40 and a 50% chance of winning nothing ($0).\n\
+
+    The jackpots and chances of winning vary across trials.\n\
     
-    Next, the prize for the lottery ticket will be drawn, e.g., 50% of winning 40 AUD. The drawn prize will be added to your total prize pot, e.g., 40 + 20 = 60 AUD.\n\
+    Your task is always the same. In every trial, simply enter the exact amount in dollars ($) you are willing to bid for that lottery ticket.\n\
     
-    You will then be compensated for your time (20 AUD/h) together with the total prize (e.g., 60 AUD)
+    Your budget is the same on every trial. Each time, you can bid up to $40.\n\
     ",
     "\
-    Throughout the experiment, there will be a fixation cross at the screen centre. Please try to keep your gaze directed at the cross.\n\
+    At the end of the testing session, ONE of the lottery tickets you placed a bid on will be randomly drawn. For example, it might be the one where you were offered a 50% chance of winning $40.\n\
+
+    Imagine you had placed a bid of $25 for that lottery ticket. Your bid of $25 will be compared to a computer bid. The computer will randomly select a monetary bid in the range of $0 - $40 AUD (for example, $20).\n\
+
+    If the computer bid is higher than yours, then you lose and your total prize pot is set to $0. But if your bid is higher than the computer bid, then you win the auction and the lottery ticket is yours!\n\
+
+    Importantly, you will only have to pay the price of the lower, computer bid ($20 in this example). The remaining funds will contribute to your total prize pot, i.e., $40 - $20 = $20 remaining.\n\
+
+    Next, the prize for the lottery ticket will be drawn, e.g., 50% of winning $40. The drawn prize will be added to your total prize pot, e.g., $40 + $20 = $60.\n\
+
+    At the end of the experiment, you will receive $20 per hour for your time (guaranteed), PLUS the total prize ($60 in the example above).    
+    ",
+    "\
+    Throughout the experiment, there will be a small cross at the screen centre. Please try to keep your gaze directed at the cross.\n\
+
     The cross will be red most of the time. The cross will turn green at the beginning of every trial, informing you that the trial is about to start.\n\
 
     In every trial, you will see a series of displays, telling you what the winning chances and the jackpot are on that trial.\n\
-    First, you will see the winning chances presented as a percentage, e.g., 14%. There are four possible chances: 7%, 14%, 28%, and 56%.\n\
-    Next, you will see a cloud of dots, distributed randomly around the screen centre. The number of dots will indicate the jackpot. There are six possible prizes: 5, 8, 13, 21, and 34 AUD\n\
-      
-    Try to pay close attention at the winning chance and the dot cloud as they will be presented only briefly.\n\
-    
-    Next, the bidding display will appear. There will be two sliders, above and below the horizontal meridian. To place your bid, you will need to use both sliders, from top to bottom.\n\
-    Use the trackball to move the slider location and the left button to enter your response.\n\
-    The top slider is automatically activated. Use it to indicate your bid to the nearest 10 AUD, e.g., 0 - 10, 10 - 20, etc. Press a button to record your response.\n\
-    The bottom slider will then activate. Use this slider to indicate your bid to the nearest cent, e.g., 15.24 AUD.\n\
-    
+
+    First, you will see the chance of winning presented as a percentage, e.g., 14%. There are four possible chances of winning: 7%, 14%, 28%, and 56%.\n\
+
+    Next, you will see a cloud of dots, distributed randomly around the screen centre. The number of dots indicates the jackpot. There are six possible prize pots: $5, $8, $13, $21, and $34.\n\
+
+    Pay close attention at both the chance of winning chance and the dot cloud as they will be presented only briefly.
+    ",
+    "\
+    Next, the bidding display will appear. There will be two sliders, one above the other. You can move your eyes freely during the bidding.\n\
+
+    To place your bid, you will need to move both sliders, one at a time. Use the trackball to move the slider location and the left button to enter your response.\n\
+
+    The top slider is automatically activated. Use it to indicate your bid to the nearest $10 (e.g., $0 to 10, $10 to 20, etc). Press the left button to record your response.\n\
+
+    The bottom slider will then activate. Use this slider to indicate your bid to the nearest dollar and cents value, e.g., $15.24.\n\
+
     The trial will end after you have placed your bid.\n\
-    
+
     The experiment will start now. Get ready!
     "
   ]

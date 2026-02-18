@@ -13,7 +13,7 @@ window:
   # size: [1470, 956] # MacBook Air
   pos: [0.0, 0]
   color: [0, 0, 0]
-  fullscr: True
+  fullscr: False
   units: deg
   winType: pyglet
   screen: 0

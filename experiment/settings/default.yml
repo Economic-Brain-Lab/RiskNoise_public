@@ -64,6 +64,7 @@ durations:
   second_fixation: 0.5
   array_duration: 0.6
   isi: [1., 1., 1.]
+  iti: 0.0  # inter-trial interval (can be a list for random selection)
   # response deadline, null if no deadline
   response_screen: 5
   feedback: 0.5
@@ -76,7 +77,11 @@ wait_for_input:
   stimulus: false
   jitter: false
   response: false
+  response1: false  # For two-sliders trial type
+  response2: false  # For two-sliders trial type
   feedback: false
+  feedback1: false  # For two-stage trial type
+  feedback2: false  # For two-stage trial type
 
 fixation_lines:
   lineWidth: 2

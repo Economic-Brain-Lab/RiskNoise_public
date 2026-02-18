@@ -45,7 +45,7 @@ class ProbCueTrial(InstructionTrial):
 
 class TaskTrial(Trial):
     def __init__(self, session, trial_nr, phase_durations=None,
-                jitter=1,
+                jitter=1, iti=0.0,
                 payoff=15, prob=0.55, **kwargs):
 
         if phase_durations is None:
@@ -59,7 +59,7 @@ class TaskTrial(Trial):
                             jitter,                                 # ISI            
                             response_duration, # Response
                             session.settings['durations']['feedback'], # Feedback
-                            0.0] #Spillover
+                            iti] # ITI (inter-trial interval)
 
         self.total_duration = np.sum(phase_durations)
 
@@ -67,14 +67,22 @@ class TaskTrial(Trial):
         self.response_phase = 4
         self.feedback_phase = 5
 
-        phase_names = ['fixation1', 'prob_cue', 'stimulus', 'jitter', 'response', 'feedback', 'iti']
+        # Check if child class provided phase_names in kwargs
+        if 'phase_names' not in kwargs:
+            kwargs['phase_names'] = ['fixation1', 'prob_cue', 'stimulus', 'jitter', 'response', 'feedback', 'iti']
+        
+        phase_names = kwargs['phase_names']
 
-        super().__init__(session, trial_nr, phase_durations, phase_names=phase_names, **kwargs)
+        super().__init__(session, trial_nr, phase_durations, **kwargs)
         
         # Apply wait_for_input settings to phase durations
         for i, phase_name in enumerate(phase_names):
             if self.should_wait_for_input(i):
                 self.phase_durations[i] = 999999
+        
+        # Debug: Print phase durations for trial (can be removed later)
+        if session.settings_file and 'demo' in session.settings_file:
+            print(f"Trial {trial_nr} phase durations: {dict(zip(phase_names, self.phase_durations))}")
 
         self.parameters['prob'] = prob
         self.parameters['payoff'] = payoff
@@ -96,6 +104,18 @@ class TaskTrial(Trial):
 
         self.parameters['start_marker_position'] = np.random.randint(self.session.settings['slider']['range'][0],
                                                                      self.session.settings['slider']['range'][1] + 1)
+    
+    def run(self):
+        """Override run to reset timer at start of each trial"""
+        # CRITICAL FIX: Reset timer at the start of each trial to ensure phases execute correctly
+        self.session.timer.reset()
+        
+        if self.session.settings_file and 'demo' in self.session.settings_file:
+            print(f"\n=== Starting Trial {self.trial_nr} run() ===")
+            print(f"  Timer reset to: {self.session.timer.getTime():.6f}")
+        
+        # Call parent's run implementation
+        super().run()
 
     def should_wait_for_input(self, phase):
         """Check if this phase should wait for user input"""
@@ -127,6 +147,18 @@ class TaskTrial(Trial):
         return False
 
     def get_events(self):
+        # Debug output
+        if self.session.settings_file and 'demo' in self.session.settings_file:
+            phase_name = self.phase_names[self.phase] if self.phase < len(self.phase_names) else 'unknown'
+            should_wait = self.should_wait_for_input(self.phase)
+            
+            # Print once per phase
+            phase_debug_key = f'_debug_phase_{self.phase}'
+            if not hasattr(self, phase_debug_key):
+                print(f"  Trial {self.trial_nr}, Phase {self.phase} ({phase_name}): "
+                      f"duration={self.phase_durations[self.phase]:.3f}, wait_for_input={should_wait}")
+                setattr(self, phase_debug_key, True)
+        
         # Check for input to advance phase if wait_for_input is enabled
         if self.should_wait_for_input(self.phase):
             # Initialize tracking for this phase on first call
@@ -146,6 +178,8 @@ class TaskTrial(Trial):
                 # Ready to accept input - check for new key events
                 keys = event.getKeys()
                 if 'space' in keys or 'return' in keys:
+                    if self.session.settings_file and 'demo' in self.session.settings_file:
+                        print(f"    -> Key press detected in phase {self.phase}, advancing")
                     self.stop_phase()
 
         events = super().get_events()
@@ -203,7 +237,7 @@ class TaskTrial(Trial):
 class TwoStageTasktrial(TaskTrial):
 
     def __init__(self, session, trial_nr, phase_durations=None,
-                jitter=1,
+                jitter=1, iti=0.0,
                 payoff=15, prob=0.55, **kwargs):
 
         if phase_durations is None:
@@ -219,10 +253,14 @@ class TwoStageTasktrial(TaskTrial):
                             session.settings['durations']['feedback'], # Feedback 1
                             0.0, # Response 2
                             session.settings['durations']['feedback'], # Feedback 2
-                            0.0] # Spillover
+                            iti] # ITI (inter-trial interval)
 
+        # Define phase_names before calling super().__init__ so wait_for_input logic uses correct names
+        kwargs['phase_names'] = ['fixation1', 'prob_cue', 'stimulus', 'jitter', 'response1', 'feedback1',
+                                 'response2', 'feedback2', 'iti']
 
-        super().__init__(session, trial_nr, phase_durations, jitter, payoff, prob, **kwargs)
+        super().__init__(session, trial_nr, phase_durations=phase_durations, 
+                        jitter=jitter, iti=iti, payoff=payoff, prob=prob, **kwargs)
 
         self.stimulus_phase = [2]
         self.response_phase1 = 4
@@ -232,9 +270,6 @@ class TwoStageTasktrial(TaskTrial):
 
         self.parameters['start_marker_position'] = np.random.uniform(self.session.settings['slider']['range'][0],
                                                                 self.session.settings['slider']['range'][1])
-
-        self.phase_names = ['fixation1', 'prob_cue', 'stimulus', 'jitter', 'response1', 'feedback1',
-                            'response2', 'feedback2', 'iti']
 
 
     def get_events(self):
@@ -365,7 +400,7 @@ class TwoStageTasktrial(TaskTrial):
 class TwoSliderTasktrial(TaskTrial):
 
     def __init__(self, session, trial_nr, phase_durations=None,
-            jitter=1,
+            jitter=1, iti=0.0,
             payoff=15, prob=0.55, **kwargs):
 
         if phase_durations is None:
@@ -381,11 +416,15 @@ class TwoSliderTasktrial(TaskTrial):
                 response_duration,                                  # Response 1
                 0.0,                                                # Response 2
                 session.settings['durations']['feedback'],          # Feedback 2
-                0.0                                                 # Spillover
+                iti                                                 # ITI (inter-trial interval)
             ] 
 
+        # Define phase_names before calling super().__init__ so wait_for_input logic uses correct names
+        kwargs['phase_names'] = ['fixation1', 'prob_cue', 'stimulus', 'jitter', 'response1', 
+                                 'response2', 'feedback', 'iti']
 
-        super().__init__(session, trial_nr, phase_durations, jitter, payoff, prob, **kwargs)
+        super().__init__(session, trial_nr, phase_durations=phase_durations,
+                        jitter=jitter, iti=iti, payoff=payoff, prob=prob, **kwargs)
 
         self.stimulus_phase = [2]
         self.response_phase1 = 4
@@ -393,10 +432,7 @@ class TwoSliderTasktrial(TaskTrial):
         self.feedback_phase = 6
 
         self.parameters['start_marker_position'] = np.random.uniform(self.session.settings['slider']['range'][0],
-                                                                self.session.settings['slider']['range'][1])
-
-        self.phase_names = ['fixation1', 'prob_cue', 'stimulus', 'jitter', 'response1', 
-                            'response2', 'feedback', 'iti'] 
+                                                                self.session.settings['slider']['range'][1]) 
         
     def get_events(self):
 

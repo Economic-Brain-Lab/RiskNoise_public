@@ -297,6 +297,13 @@ class WTPSession(PylinkEyetrackerSession):
         possible_isis = self.settings['durations'].get('isi')
         isis = possible_isis * int(np.ceil(n_trials / len(possible_isis)))
         isis = isis[:n_trials]
+        
+        # Handle ITI (inter-trial interval) similarly to ISI
+        possible_itis = self.settings['durations'].get('iti', [0.0])  # Default to [0.0] if not specified
+        if not isinstance(possible_itis, list):
+            possible_itis = [possible_itis]  # Convert single value to list
+        itis = possible_itis * int(np.ceil(n_trials / len(possible_itis)))
+        itis = itis[:n_trials]
 
         for run in range(n_runs):
             np.random.shuffle(probs_)
@@ -309,15 +316,15 @@ class WTPSession(PylinkEyetrackerSession):
                 for payoff in payoffs_:
                     
                     if self.slider_type == 'two-stage':
-                        self.trials.append(TwoStageTasktrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
-                                                prob=prob))
+                        self.trials.append(TwoStageTasktrial(self, trial_nr, jitter=isis[trial_nr-1], 
+                                                iti=itis[trial_nr-1], payoff=payoff, prob=prob))
 
                     elif self.slider_type == 'two-sliders':
-                        self.trials.append(TwoSliderTasktrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
-                                                prob=prob))
+                        self.trials.append(TwoSliderTasktrial(self, trial_nr, jitter=isis[trial_nr-1],
+                                                iti=itis[trial_nr-1], payoff=payoff, prob=prob))
                     else:
-                        self.trials.append(TaskTrial(self, trial_nr, jitter=isis[trial_nr-1], payoff=payoff,
-                                                    prob=prob))
+                        self.trials.append(TaskTrial(self, trial_nr, jitter=isis[trial_nr-1], 
+                                                iti=itis[trial_nr-1], payoff=payoff, prob=prob))
                     trial_nr += 1
             if run < (n_runs - 1):
                 blk_break = InstructionTrial(

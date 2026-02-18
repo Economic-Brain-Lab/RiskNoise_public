@@ -64,7 +64,7 @@ durations:
   second_fixation: 0.5
   array_duration: 0.6
   isi: [1., 1., 1.]
-  iti: 0.0  # inter-trial interval (can be a list for random selection)
+  iti: [0.5, 1.0, 1.5]  # inter-trial interval (can be a list for random selection)
   # response deadline, null if no deadline
   response_screen: 5
   feedback: 0.5

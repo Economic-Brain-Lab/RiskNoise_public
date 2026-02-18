@@ -46,8 +46,23 @@ class InstructionTrial(Trial):
                     self.stop_phase()
 
         if self.phase > 0:
-            if self.session.mouse.getPressed()[0]:
+            # Add debouncing: wait for mouse to be released before accepting new clicks
+            if not hasattr(self, '_mouse_ready'):
+                self._last_mouse_state = self.session.mouse.getPressed()[0]
+                # If mouse is not pressed at start, we're ready for input
+                self._mouse_ready = not self._last_mouse_state
+            
+            current_mouse_state = self.session.mouse.getPressed()[0]
+            
+            # Mouse was released
+            if self._last_mouse_state and not current_mouse_state:
+                self._mouse_ready = True
+            
+            # Mouse is now pressed and we're ready to accept it
+            if not self._last_mouse_state and current_mouse_state and self._mouse_ready:
                 self.stop_phase()
+            
+            self._last_mouse_state = current_mouse_state
 
     def draw(self):
 

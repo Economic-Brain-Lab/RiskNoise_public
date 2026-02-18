@@ -39,7 +39,7 @@ instruction1:
 
     Next, you will see a cloud of dots, distributed randomly around the screen centre. The number of dots indicates the jackpot. There are six possible prize pots: $5, $8, $13, $21, and $34.\n\
 
-    Pay close attention at both the chance of winning chance and the dot cloud as they will be presented only briefly.
+    Pay close attention at both the chance of winning and the dot cloud as they will be presented only briefly.
     ",
     "\
     Next, the bidding display will appear. There will be two sliders, one above the other. You can move your eyes freely during the bidding.\n\
@@ -59,3 +59,38 @@ instruction1:
 prob_cue:
   # "In the following block probabilities will always be"
   ""
+
+# Trial-specific instructions shown before certain trials (for demo/training)
+# Key is the trial number (1-indexed), value is the instruction text
+trial_instructions:
+  1: "\
+    TRIAL 1 - Practice Mode\n\n\
+    In this first trial, the experiment will PAUSE at every display.\n\n\
+    You will need to press the SPACE or RETURN key to advance to the next display.\n\n\
+    This allows you to take your time and familiarize yourself with the sequence:\n\
+    • Red fixation cross (press space to continue)\n\
+    • Winning probability percentage (press space)\n\
+    • Dot cloud showing jackpot (press space)\n\
+    • Brief pause (press space)\n\
+    • Bidding sliders (take your time to place your bid)\n\
+    • Your entered bid will be shown briefly (press space)\n\n\
+    Ready? Let's begin Trial 1."
+    
+  2: "\
+    TRIAL 2 - Semi-Automatic Mode\n\n\
+    Great job! Now the displays will advance AUTOMATICALLY:\n\
+    • Fixation cross, probability, dot cloud, and pause will show for their set durations\n\n\
+    However, the BIDDING phase will still wait for you:\n\
+    • Take as much time as you need to place your bid\n\
+    • The feedback will also wait for you to press space\n\n\
+    This is to help you get comfortable with the timing.\n\n\
+    Ready for Trial 2?"
+    
+  3: "\
+    TRIAL 3 - Full Speed Mode\n\n\
+    Excellent! From now on, the experiment runs at full speed:\n\
+    • All displays advance automatically\n\
+    • You have 5 seconds to place your bid\n\
+    • If you don't respond in time, you'll see 'Too late!' and move to the next trial\n\n\
+    Try to respond quickly but accurately!\n\n\
+    Ready for Trial 3 and beyond?"

@@ -139,23 +139,29 @@ class WTPSession(PylinkEyetrackerSession):
             if isinstance(trial, OutroTrial):
                 outro += 1
                 if outro == 0:
-                    # select a random trial
-                    self.sampled_trial = np.random.choice([
+                    # Get all completed experimental trials
+                    completed_trials = [
                         trl for trl in self.trials 
-                        # get just experimental trials
                         if isinstance(trl, (TaskTrial, TwoStageTasktrial, TwoSliderTasktrial))
-                        # get trials that were responded to
                         and trl.parameters.get('response') != None
-                    ])
+                    ]
+                    
+                    # For demo mode, use only the last 10 trials
                     if Path(self.settings_file).stem == 'demo':
+                        trials_for_lottery = completed_trials[-10:] if len(completed_trials) > 10 else completed_trials
+                    else:
+                        trials_for_lottery = completed_trials
+                    
+                    # select a random trial from available trials
+                    self.sampled_trial = np.random.choice(trials_for_lottery)
+                    
+                    if Path(self.settings_file).stem == 'demo':
+                        # Create formatted list with proper spacing (not tabs)
                         mssg_bids = '\n'.join(
                             ['Here is the list of lottery tickets and your bids:']
                             + [
-                                f'\t{idx_trl + 1}.\tJackpot: {val_trl.parameters["payoff"]} AUD;\tChances: {int(val_trl.parameters["prob"] * 100)}%;\tYour bid: {val_trl.parameters["response"]:.2f} AUD'
-                                for idx_trl, val_trl in enumerate([
-                                    trl for trl in self.trials
-                                    if isinstance(trl, (TaskTrial,TwoStageTasktrial,TwoSliderTasktrial))
-                                ])
+                                f'  {idx_trl + 1:2d}.  Jackpot: ${val_trl.parameters["payoff"]:2d};  Chances: {int(val_trl.parameters["prob"] * 100):2d}%;  Your bid: ${val_trl.parameters["response"]:.2f}'
+                                for idx_trl, val_trl in enumerate(trials_for_lottery)
                             ]
                         )
                     # run a bidding process and lottery draws
@@ -314,6 +320,18 @@ class WTPSession(PylinkEyetrackerSession):
 
                 np.random.shuffle(payoffs_)
                 for payoff in payoffs_:
+                    
+                    # Check if there's a trial-specific instruction to insert before this trial (demo mode only)
+                    if self.settings_file and 'demo' in self.settings_file:
+                        trial_instructions = self.instructions.get('trial_instructions', {})
+                        if trial_nr in trial_instructions:
+                            intro_trial = InstructionTrial(
+                                self, 0, 
+                                trial_instructions[trial_nr],
+                                bottom_txt='Press LEFT button to continue.')
+                            intro_trial.text.alignText = 'left'
+                            intro_trial.text2.alignText = 'left'
+                            self.trials.append(intro_trial)
                     
                     if self.slider_type == 'two-stage':
                         self.trials.append(TwoStageTasktrial(self, trial_nr, jitter=isis[trial_nr-1], 

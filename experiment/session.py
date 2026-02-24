@@ -18,7 +18,7 @@ class WTPSession(PylinkEyetrackerSession):
 
         self.mouse = event.Mouse(visible=False)
 
-        self.instructions = yaml.safe_load(open(op.join(op.dirname(__file__), 'instruction_texts.yml'), 'r'))
+        self.instructions = yaml.safe_load(open(op.join(op.dirname(__file__), 'instruction_texts.yml'), 'r', encoding='utf-8'))
 
         self.settings['subject'] = subject
         self.settings['run'] = run

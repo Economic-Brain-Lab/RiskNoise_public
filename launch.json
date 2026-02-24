@@ -15,7 +15,7 @@
             // "args": "1 1 1 --slider_type two-sliders --settings demo"
             // run this for the main session w/out eye-tracker
             // "args": "1 1 1 --slider_type two-sliders --settings default"
-            // IF you are using eye-tracker add '--calibrate-eyetracker'
+            // IF you are using eye-tracker add '--calibrate_eyetracker'
             // also, make sure to uncomment the "eyetracker" block in the settings file
             "args": "1 1 1 --slider_type two-sliders --settings default --calibrate_eyetracker"
         }

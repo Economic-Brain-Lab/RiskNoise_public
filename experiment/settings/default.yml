@@ -110,4 +110,3 @@ eyetracker:
     sample_rate: 500
     calibration_type: HV5
     calibration_area_proportion: 0.75 0.75
-    calibration_area_proportion: 0.6 0.6 

@@ -171,7 +171,7 @@ class WTPSession(PylinkEyetrackerSession):
                     self.computer_bid = round(np.random.uniform(0,self.settings['task'].get('budget')), 2)
                     if self.computer_bid > self.subject_bid:
                         self.lottery_outcome = 0
-                        self.subject_prize = 0
+                        self.subject_prize = round(self.settings['task'].get('budget'), 2)
                     else:
                         self.lottery_outcome = np.random.choice(
                             [self.sampled_payoff, 0],
@@ -208,20 +208,25 @@ class WTPSession(PylinkEyetrackerSession):
                             f'We will now proceed to drawing the lottery.'
                         ]),
                         '\n'.join([
-                            f'Your bid was lower and you lost the auction.', 
+                            f'Your bid was lower and you lost the auction.',
+                            f'You take home your endowment of {self.settings["task"].get("budget"):.2f} AUD.',
                         ])
                     ][int(self.computer_bid > self.subject_bid)]
-                    mssg_lottery = [
-                        '\n'.join([
-                            f'You won {self.lottery_outcome} AUD on the lottery.', 
+                    if self.computer_bid > self.subject_bid:
+                        mssg_lottery = '\n'.join([
+                            f'You lost the auction.',
+                            f'Your total prize is {self.subject_prize:.2f} AUD (your endowment).',
+                        ])
+                    elif self.lottery_outcome > 0:
+                        mssg_lottery = '\n'.join([
+                            f'Congratulations! You won {self.lottery_outcome:.2f} AUD on the lottery.',
                             f'Your total prize is {self.subject_prize:.2f} AUD.',
-                            f'Congratulations!'
-                        ]),
-                        '\n'.join([
-                            f'Unfortunately, you will not receive any prize.',
-                            f'You will still be compensated for your time.' 
                         ])
-                    ][int(self.computer_bid > self.subject_bid)]
+                    else:
+                        mssg_lottery = '\n'.join([
+                            f'Unfortunately, you did not win the lottery draw.',
+                            f'Your total prize is {self.subject_prize:.2f} AUD (remaining funds after the auction).',
+                        ])
                     mssg = '\n'.join([
                         f'This was the last trial.',
                         f'We will now proceed to drawing your lottery ticket.\n\n'

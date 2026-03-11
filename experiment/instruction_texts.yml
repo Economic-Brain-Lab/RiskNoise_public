@@ -12,21 +12,34 @@ instruction1:
     The jackpots and chances of winning vary across trials.\n\
     
     Your task is always the same. In every trial, simply enter the exact amount in dollars ($) you are willing to bid for that lottery ticket.\n\
+
+    At the start of the experiment, you will be given an endowment of $20. This is yours to use as you wish across the bidding trials.\n\
     
-    Your budget is the same on every trial. Each time, you can bid up to $40.\n\
+    Your budget is the same on every trial. Each time, you can bid up to $20.\n\
     ",
     "\
     At the end of the testing session, ONE of the lottery tickets you placed a bid on will be randomly drawn. For example, it might be the one where you were offered a 50% chance of winning $40.\n\
 
-    Imagine you had placed a bid of $25 for that lottery ticket. Your bid of $25 will be compared to a computer bid. The computer will randomly select a monetary bid in the range of $0 - $40 AUD (for example, $20).\n\
+    Imagine you had placed a bid of $15 for that lottery ticket. Your bid of $15 will be compared with a bid made by the computer. The computer will randomly select a monetary bid in the range of $0 - $20 AUD (for example, $10).\n\
 
-    If the computer bid is higher than yours, then you lose and your total prize pot is set to $0. But if your bid is higher than the computer bid, then you win the auction and the lottery ticket is yours!\n\
+    If the computer bid is higher than yours, then you lose the auction and take home your endowment of $20. But if your bid is higher than the computer bid, then you win the auction and the lottery ticket is yours!\n\
 
-    Importantly, you will only have to pay the price of the lower, computer bid ($20 in this example). The remaining funds will contribute to your total prize pot, i.e., $40 - $20 = $20 remaining.\n\
+    Importantly, you will only have to pay the price of the lower, computer bid ($10 in this example). The remaining funds will contribute to your total prize pot, i.e., $20 - $10 = $10 remaining.\n\
 
-    Next, the prize for the lottery ticket will be drawn, e.g., 50% of winning $40. The drawn prize will be added to your total prize pot, e.g., $40 + $20 = $60.\n\
+    Next, the prize for the lottery ticket will be drawn, e.g., 50% of winning $40. If you win the lottery draw, the prize will be added to your total prize pot, e.g., $10 + $40 = $50. If you lose the lottery draw, no prize is added, and your total prize pot is just the remaining funds, e.g., $10 + $0 = $10.
+    ",
+    "\
+    To summarise, here is what your total prize pot could be:\n\
 
-    At the end of the experiment, you will receive $20 per hour for your time (guaranteed), PLUS the total prize ($60 in the example above).    
+    1. You LOSE the bidding (computer bid is greater than your bid): you take home your endowment — $20.\n\
+    2. You WIN the bidding, but LOSE the lottery draw: you keep the remaining funds — $20 - $10 = $10.\n\
+    3. You WIN the bidding AND WIN the lottery draw: you keep the remaining funds plus the prize — $10 + $40 = $50.\n\
+
+    As you can see, winning the bidding is risky. Relative to losing the bidding, you may end up with less if the lottery draw goes against you — but you also stand a chance to more than double your prize if it goes in your favour.\n\
+
+    This is why it is important to carefully consider how valuable the lottery tickets on offer are to you. As your chances of winning the bidding depend on a randomly drawn computer bid, the best way to win the prize you are happy with is to respond honestly, instead of trying to 'beat the game'.\n\
+
+    At the end of the experiment, you will receive $20 per hour for your time (guaranteed), PLUS your total prize pot (e.g., $20, $10, or $50 in the scenarios above).
     ",
     "\
     Throughout the experiment, there will be a small cross at the screen centre. Please try to keep your gaze directed at the cross.\n\

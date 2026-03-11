@@ -5,7 +5,7 @@ task:
   probabilities: [.07, .14, .28, .56]
   payoffs: [5, 8, 13, 21, 34]
   show_prob_during_payoff: False
-  budget: 40
+  budget: 20
 
 window:
   size: [1920, 1080]
@@ -101,12 +101,12 @@ mouse:
 interface:
   mouse_multiplier: 2.
 
-eyetracker:
-  model: eyelink
-  CNUM: 5
-  MIN_CALIB_FIX: 1000
-  options:
-    active_eye: RIGHT
-    sample_rate: 500
-    calibration_type: HV5
-    calibration_area_proportion: 0.75 0.75
+# eyetracker:
+#   model: eyelink
+#   CNUM: 5
+#   MIN_CALIB_FIX: 1000
+#   options:
+#     active_eye: RIGHT
+#     sample_rate: 500
+#     calibration_type: HV5
+#     calibration_area_proportion: 0.75 0.75

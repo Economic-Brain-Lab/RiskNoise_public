@@ -496,8 +496,12 @@ class TwoSliderTasktrial(TaskTrial):
                     self.parameters['response'] = response_slider2.marker_position
                     self.session.response_slider2.marker.inner_color = self.session.settings['slider'].get('feedbackColor')
 
-                    time_so_far = self.session.clock.getTime() - self.start_trial
-                    self.phase_durations[self.feedback_phase] = np.min((self.total_duration - time_so_far, self.phase_durations[self.feedback_phase]))
+                    # Only cap feedback duration by total_duration when NOT waiting for
+                    # explicit input (i.e. demo trials 1 & 2). If wait_for_input is active
+                    # the phase duration is already 999999 and must not be overwritten here.
+                    if not self.should_wait_for_input(self.feedback_phase):
+                        time_so_far = self.session.clock.getTime() - self.start_trial
+                        self.phase_durations[self.feedback_phase] = np.min((self.total_duration - time_so_far, self.phase_durations[self.feedback_phase]))
 
                     self.stop_phase()
 

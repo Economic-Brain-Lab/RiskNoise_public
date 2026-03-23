@@ -4,7 +4,7 @@ from stimuli import ResponseSlider, FixationLines, TextStim, RangeResponseSlider
 import yaml
 import os.path as op
 from instruction import InstructionTrial
-from task import TaskTrial, OutroTrial, DummyWaiterTrial, ProbCueTrial, TwoStageTasktrial, TwoSliderTasktrial
+from task import TaskTrial, OutroTrial, DummyWaiterTrial, ProbCueTrial, TwoStageTasktrial, TwoSliderTasktrial, DriftCheckTrial
 import numpy as np
 from pathlib import Path
 
@@ -359,6 +359,10 @@ class WTPSession(PylinkEyetrackerSession):
                 blk_break.text.alignText = 'center'
                 blk_break.text2.alignText = 'center'
                 self.trials.append(blk_break)
+                # Drift correction at the start of the next run (if eyetracking is on)
+                et_settings = self.settings.get('eyetracker', {})
+                if self.eyetracker_on and et_settings.get('drift_check_between_runs', True):
+                    self.trials.append(DriftCheckTrial(self))
 
 
         # append different outro pages to serve for lottery drawing

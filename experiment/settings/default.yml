@@ -105,6 +105,7 @@ interface:
 #   model: eyelink
 #   CNUM: 5
 #   MIN_CALIB_FIX: 1000
+#   drift_check_between_runs: True  # perform drift correction (with optional recalibration) at each block boundary
 #   options:
 #     active_eye: RIGHT
 #     sample_rate: 500

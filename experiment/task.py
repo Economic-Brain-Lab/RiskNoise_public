@@ -16,6 +16,40 @@ import numpy as np
 import logging
 from psychopy.visual import Line, Rect, TextStim
 
+class DriftCheckTrial(Trial):
+    """Performs an EyeLink drift correction at the start of a run.
+
+    Shows a fixation dot at screen centre via the EyeLink host PC display.
+    - ENTER (on host keyboard) accepts the measured drift and continues.
+    - ESCAPE launches the full calibration + validation routine, then continues.
+
+    The trial is a no-op when eyetracking is disabled.
+    """
+
+    def __init__(self, session):
+        super().__init__(session, trial_nr=0, phase_durations=[np.inf], verbose=False)
+
+    def run(self):
+        if not self.session.eyetracker_on:
+            return
+
+        tracker = self.session.tracker
+        win = self.session.win
+
+        # Pause recording while performing drift correction
+        self.session.stop_recording_eyetracker()
+
+        # Screen centre in EyeLink pixel coordinates (top-left origin)
+        cx = win.size[0] // 2
+        cy = win.size[1] // 2
+
+        # draw=1  → EyeLink draws its own fixation marker on the stimulus display
+        # allow_setup=1 → ESCAPE on host PC triggers full calibration/validation
+        tracker.doDriftCorrect(cx, cy, draw=1, allow_setup=1)
+
+        self.session.start_recording_eyetracker()
+
+
 class ProbCueTrial(InstructionTrial):
 
     def __init__(self, session, trial_nr, prob, **kwargs):

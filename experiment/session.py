@@ -247,16 +247,18 @@ class WTPSession(PylinkEyetrackerSession):
                         mssg_auction
                     ])
                 if outro == 3:
+                    mssg = mssg_lottery
+                if outro == 4:
                     mssg = '\n'.join([
                         mssg_lottery,
-                        'Thank you for your participation.',
+                        '\nThank you for your participation.',
                         'Please remain as you are. Somebody will assist you shortly.'
                     ])
                 
                 trial.set_text(mssg)
                 
                 mssg_bottom = 'Press LEFT mouse button to continue.'
-                if outro == 3:
+                if outro == 4:
                     mssg_bottom = ''
                 trial.set_bottom_text(mssg_bottom)
 
@@ -360,9 +362,11 @@ class WTPSession(PylinkEyetrackerSession):
 
 
         # append different outro pages to serve for lottery drawing
-        n_pages = 4
+        n_pages = 5
         for pg in range(n_pages):
             otrl = OutroTrial(session=self)
             otrl.text.alignText = 'center'
             otrl.text2.alignText = 'center'
             self.trials.append(otrl)
+        # Last outro is experimenter-dismissed via space only; participants cannot click past it
+        self.trials[-1].keyboard_only = True

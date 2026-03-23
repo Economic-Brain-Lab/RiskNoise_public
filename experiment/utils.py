@@ -125,11 +125,15 @@ class OutroTrial(InstructionTrial):
                     self.stop_phase()
         
         # Detect NEW mouse clicks (button press, not hold)
-        mouse_is_pressed = self.session.mouse.getPressed()[0]
-        if mouse_is_pressed and not self.mouse_was_pressed:
-            # This is a new click
-            self.stop_phase()
-        self.mouse_was_pressed = mouse_is_pressed
+        if not getattr(self, 'keyboard_only', False):
+            mouse_is_pressed = self.session.mouse.getPressed()[0]
+            if mouse_is_pressed and not self.mouse_was_pressed:
+                # This is a new click
+                self.stop_phase()
+            self.mouse_was_pressed = mouse_is_pressed
+        else:
+            # Keep mouse state in sync without acting on it
+            self.mouse_was_pressed = self.session.mouse.getPressed()[0]
 
     
     def set_text(self, txt):

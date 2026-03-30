@@ -7,14 +7,19 @@
 import argparse
 import os.path as op
 from psychopy.visual import Slider
-from psychopy import event
+from psychopy import event, core
 from exptools2.core import PylinkEyetrackerSession, Trial
+try:
+    import pylink
+    PYLINK_AVAILABLE = True
+except ModuleNotFoundError:
+    PYLINK_AVAILABLE = False
 from utils import _create_stimulus_array, get_output_dir_str, DummyWaiterTrial, OutroTrial, get_settings
 from instruction import InstructionTrial
 from stimuli import FixationLines, ResponseSlider, ProbabilityPieChart
 import numpy as np
 import logging
-from psychopy.visual import Line, Rect, TextStim
+from psychopy.visual import Line, Rect, TextStim, Circle
 
 class DriftCheckTrial(Trial):
     """Performs an EyeLink drift correction at the start of a run.
@@ -36,16 +41,55 @@ class DriftCheckTrial(Trial):
         tracker = self.session.tracker
         win = self.session.win
 
-        # Pause recording while performing drift correction
         self.session.stop_recording_eyetracker()
+        tracker.setOfflineMode()
+        pylink.msecDelay(500)  # 500 ms — allows host to fully transition out of recording
+
+        # Ensure the custom display is in non-initialising mode so callbacks work
+        if self.session.display is not None:
+            self.session.display.initialising = False
 
         # Screen centre in EyeLink pixel coordinates (top-left origin)
         cx = win.size[0] // 2
         cy = win.size[1] // 2
 
-        # draw=1  → EyeLink draws its own fixation marker on the stimulus display
-        # allow_setup=1 → ESCAPE on host PC triggers full calibration/validation
-        tracker.doDriftCorrect(cx, cy, draw=1, allow_setup=1)
+        # Outer fixation circle (white, radius 10 px) + inner circle (25% diameter =
+        # radius 2.5 px) filled with the background colour, forming a bull's-eye target.
+        outer_r = 10
+        inner_r = outer_r * 0.25  # 25 % of outer diameter
+        fixation_outer = Circle(win, radius=outer_r, fillColor='white',
+                                lineColor='white', units='pix')
+        fixation_inner = Circle(win, radius=inner_r, fillColor=win.color,
+                                lineColor=win.color, units='pix')
+
+        # Manual event loop so win.flip() is called every frame.
+        # On macOS (pyglet backend) the OS only dispatches keyboard events during
+        # win.flip(), so event.getKeys() is empty without it — this is why the
+        # high-level doDriftCorrect() call could never be exited from the display PC.
+        while True:
+            tracker.startDriftCorrect(cx, cy)
+
+            accepted = False
+            recalibrate = False
+            while not accepted and not recalibrate:
+                fixation_outer.draw()
+                fixation_inner.draw()
+                win.flip()  # flushes pyglet event pump → event.getKeys() works
+
+                keys = event.getKeys(['return', 'space', 'escape'])
+                if 'return' in keys or 'space' in keys:
+                    tracker.applyDriftCorrect()
+                    accepted = True
+                elif 'escape' in keys:
+                    # Full re-calibration, then loop back to drift check
+                    tracker.doTrackerSetup()
+                    tracker.setOfflineMode()
+                    pylink.msecDelay(500)
+                    recalibrate = True
+
+            if accepted:
+                break
+            # recalibrate == True: restart the outer loop → startDriftCorrect again
 
         self.session.start_recording_eyetracker()
 

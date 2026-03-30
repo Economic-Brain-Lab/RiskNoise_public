@@ -1,5 +1,7 @@
 from exptools2.core import PylinkEyetrackerSession, Trial
+from exptools2.core.eyetracker import PsychopyCustomDisplay
 from psychopy import event
+from psychopy.visual import TextStim as PsychoTextStim
 from stimuli import ResponseSlider, FixationLines, TextStim, RangeResponseSlider, DiscreteResponseSlider
 import yaml
 import os.path as op
@@ -7,6 +9,47 @@ from instruction import InstructionTrial
 from task import TaskTrial, OutroTrial, DummyWaiterTrial, ProbCueTrial, TwoStageTasktrial, TwoSliderTasktrial, DriftCheckTrial
 import numpy as np
 from pathlib import Path
+try:
+    import pylink
+    PYLINK_AVAILABLE = True
+except ModuleNotFoundError:
+    PYLINK_AVAILABLE = False
+
+
+if PYLINK_AVAILABLE:
+    class WTPCustomDisplay(PsychopyCustomDisplay):
+        """Custom display that shows a 'please wait' message instead of
+        a blank screen while pylink owns the stimulus display."""
+
+        WAIT_TEXT = 'Please wait, the experiment is initialising.'
+
+        def _draw_wait_message(self):
+            PsychoTextStim(
+                self.win,
+                text=self.WAIT_TEXT,
+                pos=(0, 0),
+                color=(1, 1, 1),
+                height=0.6,
+                alignText='center',
+                anchorHoriz='center',
+            ).draw()
+            self.win.flip()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.initialising = True
+
+        def setup_cal_display(self):
+            if self.initialising:
+                self._draw_wait_message()
+            else:
+                super().setup_cal_display()
+
+        def clear_cal_display(self):
+            if self.initialising:
+                self._draw_wait_message()
+            else:
+                super().clear_cal_display()
 
 class WTPSession(PylinkEyetrackerSession):
     def __init__(self, output_str, subject=None, output_dir=None, settings_file=None, run=None, eyetracker_on=False, calibrate_eyetracker=False,
@@ -38,6 +81,24 @@ class WTPSession(PylinkEyetrackerSession):
 
         print("Window colorSpace:", self.win.colorSpace)
 
+    def calibrate_eyetracker(self):
+        """Switch display to calibration mode before handing off to pylink."""
+        if self.eyetracker_on and self.display is not None:
+            self.display.initialising = False
+        super().calibrate_eyetracker()
+
+    def _create_display(self):
+        """Use WTPCustomDisplay so pylink shows the wait message instead of
+        a blank screen during initialisation."""
+        if not self.eyetracker_on or not PYLINK_AVAILABLE:
+            return None
+        display = WTPCustomDisplay(self.tracker, self.win, self.settings)
+        pylink.openGraphicsEx(display)
+        # pylink doesn't call any display callbacks during openGraphicsEx, so
+        # the screen is blank after the parent __init__'s win.flip(). Draw the
+        # message manually here; it will persist through _set_options_tracker().
+        display._draw_wait_message()
+        return display
 
     def _setup_response_slider(self, slider_type='natural'):
 

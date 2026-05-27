@@ -13,12 +13,12 @@ instruction1:
     
     Your task is always the same. In every trial, simply enter the exact amount in dollars ($) you are willing to bid for that lottery ticket.\n\
 
-    At the start of the experiment, you will be given an endowment of $20. This is yours to use as you wish across the bidding trials.\n\
+    At the start of the experiment, you will be given an endowment of $20. This is yours to use as you wish in each trial.\n\
     
     Your budget is the same on every trial. Each time, you can bid up to $20.\n\
     ",
     "\
-    At the end of the testing session, ONE of the lottery tickets you placed a bid on will be randomly drawn. For example, it might be the one where you were offered a 50% chance of winning $40.\n\
+    At the end of the testing session, only ONE of the lottery tickets you placed a bid on will be randomly drawn. For example, it might be the one where you were offered a 50% chance of winning $40.\n\
 
     Imagine you had placed a bid of $15 for that lottery ticket. Your bid of $15 will be compared with a bid made by the computer. The computer will randomly select a monetary bid in the range of $0 - $20 AUD (for example, $10).\n\
 
@@ -50,7 +50,7 @@ instruction1:
 
     First, you will see the chance of winning presented as a percentage, e.g., 14%. There are four possible chances of winning: 7%, 14%, 28%, and 56%.\n\
 
-    Next, you will see a cloud of dots, distributed randomly around the screen centre. The number of dots indicates the jackpot. There are six possible prize pots: $5, $8, $13, $21, and $34.\n\
+    Next, you will see a cloud of dots, distributed randomly around the screen centre. The number of dots indicates the jackpot. There are five possible prize pots: $5, $8, $13, $21, and $34.\n\
 
     Pay close attention at both the chance of winning and the dot cloud as they will be presented only briefly.
     ",
@@ -83,7 +83,7 @@ trial_instructions:
     This allows you to take your time and familiarize yourself with the sequence:\n\
     • Red fixation cross (press space to continue)\n\
     • Winning probability percentage (press space)\n\
-    • Dot cloud showing jackpot (press space)\n\
+    • Dot cloud showing jackpot between $5 and $34 (press space)\n\
     • Brief pause (press space)\n\
     • Bidding sliders (take your time to place your bid)\n\
     • Your entered bid will be shown briefly (press space)\n\n\

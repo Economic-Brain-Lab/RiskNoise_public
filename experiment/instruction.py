@@ -30,7 +30,7 @@ class InstructionTrial(Trial):
             bottom_txt = "Press any button to continue"
 
         self.text2 = TextStim(session.win, bottom_txt, pos=(
-            0.0, -6.0), height=txt_height, wrapWidth=txt_width,
+            0.0, -10.0), height=txt_height, wrapWidth=txt_width,
             color=txt_color, alignText=txt_align, anchorHoriz='center')
 
     def get_events(self):

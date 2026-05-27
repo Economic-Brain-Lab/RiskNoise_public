@@ -55,7 +55,7 @@ slider:
 
 various:
   text_width: 40
-  text_height: .5
+  text_height: .8
   text_color: [1, 1, 1]
   text_align: left
 
@@ -101,13 +101,13 @@ mouse:
 interface:
   mouse_multiplier: 2.
 
-# eyetracker:
-#   model: eyelink
-#   CNUM: 5
-#   MIN_CALIB_FIX: 1000
-#   drift_check_between_runs: True  # perform drift correction (with optional recalibration) at each block boundary
-#   options:
-#     active_eye: RIGHT
-#     sample_rate: 500
-#     calibration_type: HV5
-#     calibration_area_proportion: 0.75 0.75
+eyetracker:
+  model: eyelink
+  CNUM: 5
+  MIN_CALIB_FIX: 1000
+  drift_check_between_runs: True  # perform drift correction (with optional recalibration) at each block boundary
+  options:
+    active_eye: RIGHT
+    sample_rate: 500
+    calibration_type: HV5
+    calibration_area_proportion: 0.75 0.75

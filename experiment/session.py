@@ -219,7 +219,7 @@ class WTPSession(PylinkEyetrackerSession):
                     if Path(self.settings_file).stem == 'demo':
                         # Create formatted list with proper spacing (not tabs)
                         mssg_bids = '\n'.join(
-                            ['Here is the list of lottery tickets and your bids:']
+                            ['Here is a selection of some of your lottery tickets and the bids you made. Even though you completed more trials, for the practice, we will draw one of these tickets:']
                             + [
                                 f'  {idx_trl + 1:2d}.  Jackpot: ${val_trl.parameters["payoff"]:2d};  Chances: {int(val_trl.parameters["prob"] * 100):2d}%;  Your bid: ${val_trl.parameters["response"]:.2f}'
                                 for idx_trl, val_trl in enumerate(trials_for_lottery)

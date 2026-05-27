@@ -55,7 +55,7 @@ slider:
 
 various:
   text_width: 40
-  text_height: .5
+  text_height: 0.8
   text_color: [1, 1, 1]
   text_align: left
 
